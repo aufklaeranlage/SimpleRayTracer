@@ -1,0 +1,121 @@
+# directories
+SRC_DIR		:= src
+INC_DIR		:= inc
+OBJ_DIR		:= obj
+
+# files
+
+NAME		:= fpn
+
+## sources
+SRC	:=
+vpath %.c $(SRC_DIR)
+SRC += fpn.c
+
+## objects
+OBJ		:= $(SRC:.c=.o)
+OBJ		:= $(addprefix $(OBJ_DIR)/, $(OBJ))
+
+## dependencies
+DEPS	:= $(OBJ:%.o=%.d)
+
+## commands
+CC			:= cc
+LD			:= cc
+RM			:= rm -rf
+AR			:= ar
+RANLIB		:= ranlib
+DIR_DUP		= mkdir -p $(@D)	# $(@D) = target directory
+
+## cflags
+CFLAGS		:=
+CFLAGS		+= -Wall
+CFLAGS		+= -Wextra
+CFLAGS		+= -Werror
+CFLAGS		+= -O3
+
+## cppflags
+CPPFLAGS	:=
+CPPFLAGS	+= -MMD
+CPPFLAGS	+= -MP
+CPPFLAGS	+= $(addprefix -I, $(INC_DIR))
+
+ifdef FPN_BITS
+	CPPFLAGS += -DFPN_BITS=$(FPN_BITS)
+endif
+
+ifdef FPN_WBITS
+	CPPFLAGS += -DFPN_WBITS=$(FPN_WBITS)
+endif
+
+## ldflags
+LDFLAGS		:=
+# libft
+LDFLAGS		+= $(addprefix -L, $(LIB_DIR))
+LDFLAGS		+= $(addprefix -l, ft)
+# mlx
+LDFLAGS		+= $(addprefix -L, minilibx-linux)
+LDFLAGS		+= $(addprefix -l, mlx)
+LDFLAGS		+= $(addprefix -l, Xext)
+LDFLAGS		+= $(addprefix -l, X11)
+# math
+LDFLAGS		+= $(addprefix -l, m)
+
+## conditional flags
+ifeq ($(DEBUG), 1)
+	CFLAGS += -O0
+	CFLAGS += -g3
+	CFLAGS += -D LAZY_NORMALIZED
+	CPPFLAGS += -g3
+	CPPFLAGS += -D LAZY_NORMALIZED
+endif
+
+ifeq ($(UB), 1)
+	CFLAGS += -O0
+	CFLAGS += -g3
+	CFLAGS += -fsanitize=undefined
+	CPPFLAGS += -g3
+	LDFLAGS += -fsanitize=undefined
+endif
+
+ifeq ($(ASAN), 1)
+	CFLAGS += -O0
+	CFLAGS += -g3
+	CFLAGS += -fsanitize=address
+	CPPFLAGS += -g3
+	LDFLAGS += -fsanitize=address
+endif
+
+ifeq ($(LSAN), 1)
+	CFLAGS += -O0
+	CFLAGS += -g3
+	CFLAGS += -fsanitize=leak
+	CPPFLAGS += -g3
+	LDFLAGS += -fsanitize=leak
+endif
+
+# rules
+
+all: $(NAME)
+
+$(NAME): $(OBJ)
+	$(AR) rcs $(NAME) $(OBJ)
+
+$(OBJ_DIR)/%.o: %.c
+	$(DIR_DUP)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+
+-include $(DEPS)
+
+clean:
+	$(RM) $(OBJ_DIR)
+
+fclean: clean
+	$(RM) $(NAME) $(DEPS)
+
+re: fclean all
+
+run: re
+	./$(NAME)
+
+.PHONY: clean fclean re run
