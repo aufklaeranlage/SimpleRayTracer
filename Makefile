@@ -9,6 +9,8 @@ NAME		:= miniRT
 
 ## sources
 SRC	:=
+vpath %.c $(SRC_DIR)/tuple
+SRC += tuple_init.c
 
 ## objects
 OBJ		:= $(SRC:.c=.o)
@@ -18,9 +20,15 @@ OBJ		:= $(addprefix $(OBJ_DIR)/, $(OBJ))
 DEPS	:= $(OBJ:%.o=%.d)
 
 ## libraries
+# fpn
+ifndef FPN_BITS
+	FPN_BITS=32
+endif
+ifndef FPN_WBITS
+	FPN_WBITS=24
+endif
 FPN		:= libfpn.a
 FPN_DIR	:= $(LIB_DIR)/fpn
-UNITY	:= 
 
 ## commands
 CC			:= cc
@@ -28,6 +36,8 @@ LD			:= cc
 RM			:= rm -rf
 AR			:= ar
 RANLIB		:= ranlib
+MAKE		:= make
+CMAKE		:= cmake
 DIR_DUP		= mkdir -p $(@D)	# $(@D) = target directory
 
 ## cflags
@@ -35,7 +45,6 @@ CFLAGS		:=
 CFLAGS		+= -Wall
 CFLAGS		+= -Wextra
 CFLAGS		+= -Werror
-CFLAGS		+= -O3
 
 ## cppflags
 CPPFLAGS	:=
@@ -44,19 +53,48 @@ CPPFLAGS	+= -MP
 CPPFLAGS	+= $(addprefix -I, $(INC_DIR))
 CPPFLAGS	+= $(addprefix -I, $(FPN_DIR)/$(INC_DIR))
 
+CPPFLAGS	+= -DFPN_BITS=$(FPN_BITS) -DFPN_WBITS=$(FPN_WBITS)
+
 ## ldflags
 LDFLAGS		:=
 # fpn
 LDFLAGS		+= $(addprefix -L, $(FPN_DIR))
 LDFLAGS		+= $(addprefix -l, fpn)
 
+
+# testing
+## directories
+TEST_DIR		:= test
+TEST_SRC_DIR	:= $(TEST_DIR)/src
+TEST_OBJ_DIR	:= $(TEST_DIR)/obj
+## Unity
+UNI			:= libunity.a
+UNI_DIR		:= test/Unity
+
+## sources
+TEST_SRC	:=
+vpath %.c $(TEST_SRC_DIR)
+TEST_SRC	+= tuple.c
+
+## objects
+TEST_OBJ	:= $(TEST_SRC:.c=.out)
+TEST_OBJ	:= $(addprefix $(TEST_OBJ_DIR)/, $(TEST_OBJ))
+
+## flags
+TEST_CPPFLAGS	+= $(addprefix -I, $(UNI_DIR)/src)
+TEST_LDFLAGS	+= $(addprefix -L, $(UNI_DIR))
+TEST_LDFLAGS	+= $(addprefix -l, unity)
+
+ifndef DEBUG
+	CFLAGS += -O3
+else
+	CFLAGS += -O0
+endif
+
 ## conditional flags
 ifeq ($(DEBUG), 1)
-	CFLAGS += -O0
 	CFLAGS += -g3
-	CFLAGS += -D LAZY_NORMALIZED
 	CPPFLAGS += -g3
-	CPPFLAGS += -D LAZY_NORMALIZED
 endif
 
 ifeq ($(UB), 1)
@@ -87,14 +125,28 @@ endif
 
 all: $(NAME)
 
-$(NAME): $(OBJ) $(FPN)
+$(NAME): $(FPN) $(OBJ)
 	$(LD) $(OBJ) -o $@ $(LDFLAGS)
+
+test: $(UNI) $(FPN) $(OBJ) $(TEST_OBJ)
+	$(RM) $(TEST_OBJ_DIR)
+	$(MAKE) -C $(UNI_DIR) clean
 
 $(FPN):
 	$(MAKE) -C $(FPN_DIR) FPN_BITS=32 FPN_WBITS=24
 
+$(UNI):
+	$(CMAKE) $(UNI_DIR)
+	$(MAKE) -C $(UNI_DIR)
+
+$(TEST_OBJ_DIR)/%.out: $(TEST_SRC_DIR)/%.c
+	@$(DIR_DUP)
+	$(CC) $(OBJ) $(CFLAGS) $(TEST_CFLAGS) $(CPPFLAGS) $(TEST_CPPFLAGS) -o $@ $< $(LDFLAGS) $(TEST_LDFLAGS)
+	./$@
+	$(RM) $@
+
 $(OBJ_DIR)/%.o: %.c
-	$(DIR_DUP)
+	@$(DIR_DUP)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 -include $(DEPS)

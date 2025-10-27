@@ -5,7 +5,7 @@ OBJ_DIR		:= obj
 
 # files
 
-NAME		:= fpn
+NAME		:= libfpn.a
 
 ## sources
 SRC	:=

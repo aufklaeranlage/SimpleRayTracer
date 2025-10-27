@@ -37,8 +37,12 @@ width instead set FPN_WBITS to that number before compilation of this library"
 # define FPN_FMASK (((t_fpn)1 << FPN_FBITS) - 1)
 
 # define FPN_RCONST(R) ((t_fpn)((R) * FPN_ONE + ((R) >= 0 ? 0.5 : -0.5)))
+
 # define FPN_FROMINT(I) ((t_fpn)(I) << FPN_FBITS)
 # define FPN_TOINT(F) ((F) >> FPN_FBITS)
+
+# define FPN_FROMFLT(F) ((t_fpn) ((F) * (float)(1L << FPN_FBITS)))
+# define FPN_TOFLT(T) ((float) ((T)*((float)(1)/(float)(1L << FPN_FBITS)))
 
 # define FPN_ADD(A, B) ((A) + (B))
 # define FPN_SUB(A, B) ((A) - (B))
