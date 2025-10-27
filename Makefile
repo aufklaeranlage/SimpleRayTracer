@@ -20,6 +20,7 @@ DEPS	:= $(OBJ:%.o=%.d)
 ## libraries
 FPN		:= libfpn.a
 FPN_DIR	:= $(LIB_DIR)/fpn
+UNITY	:= 
 
 ## commands
 CC			:= cc
