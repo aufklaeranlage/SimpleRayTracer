@@ -11,6 +11,8 @@ NAME		:= miniRT
 SRC	:=
 vpath %.c $(SRC_DIR)/tuple
 SRC += tuple_init.c
+SRC += tuple_check.c
+SRC += tuple_math.c
 
 ## objects
 OBJ		:= $(SRC:.c=.o)

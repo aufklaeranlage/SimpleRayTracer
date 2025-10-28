@@ -1,6 +1,6 @@
 #include "tuple.h"
 
-#include "fptc.h"
+#include "fptc-ns.h"
 
 t_tup	tup(fpt x, fpt y, fpt z, fpt w) {
 	return ((t_tup) {x, y, z, w});
