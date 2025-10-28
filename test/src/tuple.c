@@ -29,6 +29,12 @@ static void	test_scale_fraction(void);
 
 static void	test_magn(void);
 
+static void	test_norm(void);
+
+static void	test_dot(void);
+
+static void	test_cross(void);
+
 void setUp(void) {
 
 }
@@ -52,6 +58,9 @@ int	main(void) {
 	RUN_TEST(test_scale_scalar);
 	RUN_TEST(test_scale_fraction);
 	RUN_TEST(test_magn);
+	RUN_TEST(test_norm);
+	RUN_TEST(test_dot);
+	RUN_TEST(test_cross);
 	return UNITY_END();
 }
 
@@ -201,4 +210,48 @@ static void	test_magn(void) {
 	v1 = vec3d(i2fpt(-1), i2fpt(-2), i2fpt(-3));
 
 	TEST_ASSERT_EQUAL_INT32(fpt_sqrt(i2fpt(14)), tup_magn(&v1));
+}
+
+static void	test_norm(void) {
+	t_tup	t1 = vec3d(fl2fpt(4), fl2fpt(0), fl2fpt(0));
+
+	tup_norm(&t1);
+
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(1), t1.x);
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(0), t1.y);
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(0), t1.z);
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(0), t1.w);
+
+	t1 = vec3d(fl2fpt(1), fl2fpt(2), fl2fpt(3));
+
+	tup_norm(&t1);
+
+	TEST_ASSERT_TRUE(fpt_equal(FPT_ONE, tup_magn(&t1)));
+}
+
+static void	test_dot(void) {
+	t_tup	v1 = vec3d(fl2fpt(1), fl2fpt(2), fl2fpt(3));
+	t_tup	v2 = vec3d(fl2fpt(2), fl2fpt(3), fl2fpt(4));
+
+	TEST_ASSERT_EQUAL_INT32(i2fpt(20), tup_dot(&v1, &v2));
+}
+
+static void	test_cross(void) {
+	t_tup	v1 = vec3d(fl2fpt(1), fl2fpt(2), fl2fpt(3));
+	t_tup	v2 = vec3d(fl2fpt(2), fl2fpt(3), fl2fpt(4));
+
+	t_tup	t1 = v1;
+	t_tup	t2 = v2;
+
+	tup_cross(&t1, &v2);
+
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(-1), t1.x);
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(2), t1.y);
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(-1), t1.z);
+	
+	tup_cross(&t2, &v1);
+
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(1), t2.x);
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(-2), t2.y);
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(1), t2.z);
 }

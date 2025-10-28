@@ -9,6 +9,7 @@ NAME		:= miniRT
 
 ## sources
 SRC	:=
+# SRC += main.c
 vpath %.c $(SRC_DIR)/tuple
 SRC += tuple_init.c
 SRC += tuple_check.c

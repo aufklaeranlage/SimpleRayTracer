@@ -4,7 +4,9 @@
 # include <stdio.h>	// needed for sscanf in ftpc.h
 # include "fptc-ns.h"
 
-#include <stdbool.h>
+# include <stdbool.h>
+
+# define EPSILON 4
 
 typedef struct s_tup {
 	fpt	x;
@@ -27,6 +29,8 @@ t_tup	tup0(void);
 
 bool	tup_equal(const t_tup *a, const t_tup *b);
 
+bool	fpt_equal(fpt a, fpt b);
+
 // Maths
 
 t_tup	*tup_add(t_tup *a, const t_tup *b);
@@ -38,5 +42,11 @@ t_tup	*tup_neg(t_tup *a);
 t_tup	*tup_scale(t_tup *a, fpt scale);
 
 fpt		tup_magn(const t_tup *a);
+
+t_tup	*tup_norm(t_tup *a);
+
+fpt		tup_dot(const t_tup *a, const t_tup *b);
+
+t_tup	*tup_cross(t_tup *a, const t_tup *b);
 
 #endif

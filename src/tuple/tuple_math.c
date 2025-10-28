@@ -55,3 +55,33 @@ fpt		tup_magn(const t_tup *a) {
 			fpt_add(fpt_mul(a->y, a->y),
 				(fpt_mul(a->z, a->z))))));
 }
+
+// Takes a pointer to a tuple, normalizes the tuple in place.
+// Returns the pointer to the first parameter.
+t_tup	*tup_norm(t_tup *a) {
+	fpt	magnitude;
+	
+	magnitude = tup_magn(a);
+	return (tup_scale(a, fpt_div(FPT_ONE, magnitude)));
+}
+
+// Takes two pointers to tuples and returns their dot product.
+// Doesn't take w into account, since this should only be used on vectors.
+fpt		tup_dot(const t_tup *a, const t_tup *b) {
+	return (fpt_add(fpt_mul(a->x, b->x),
+		fpt_add(fpt_mul(a->y, b->y),
+			fpt_mul(a->z, b->z))));
+}
+
+// Takes two pointers to tuples and returns calculates their cross product,
+// the result get's stored in the first tuple.
+// Returns the pointer to the first parameter.
+t_tup	*tup_cross(t_tup *a, const t_tup *b) {
+	t_tup	v1;
+
+	v1 = vec3d(fpt_sub(fpt_mul(a->y, b->z), fpt_mul(a->z, b->y)),
+			fpt_sub(fpt_mul(a->z, b->x), fpt_mul(a->x, b->z)),
+			fpt_sub(fpt_mul(a->x, b->y), fpt_mul(a->y, b->x)));
+	*a = v1;
+	return (a);
+}
