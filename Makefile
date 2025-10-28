@@ -9,20 +9,25 @@ NAME		:= miniRT
 
 ## sources
 SRC	:=
-$(NAME): SRC += main.c
-all: SRC += main.c
-re: SRC += main.c
+SRC := main.c
 vpath %.c $(SRC_DIR)/tuple
 SRC += tuple_init.c
 SRC += tuple_check.c
 SRC += tuple_math.c
+vpath %.c $(SRC_DIR)/graphics
+SRC += screen.c
+SRC += window.c
+SRC += image.c
+SRC += draw.c
 
 ## objects
 OBJ		:= $(SRC:.c=.o)
 OBJ		:= $(addprefix $(OBJ_DIR)/, $(OBJ))
 
-##clibraries etc
+## libraries etc
 FPT_DIR	:= lib/fptc-ns-lib/src
+MLX_DIR := lib/minilibx-linux
+MLX		:= libmlx.a
 
 ## dependencies
 DEPS	:= $(OBJ:%.o=%.d)
@@ -49,12 +54,17 @@ CPPFLAGS	+= -MMD
 CPPFLAGS	+= -MP
 CPPFLAGS	+= $(addprefix -I, $(INC_DIR))
 CPPFLAGS	+= $(addprefix -I, $(FPT_DIR))
+CPPFLAGS	+= $(addprefix -I, $(MLX_DIR))
 
 ### fpt
 CPPFLAGS		+= -DFPT_BITS=32
 
 ## ldflags
 LDFLAGS		:=
+LDFLAGS		+= $(addprefix -L, $(MLX_DIR))
+LDFLAGS		+= $(addprefix -l, mlx)
+LDFLAGS		+= $(addprefix -l, Xext)
+LDFLAGS		+= $(addprefix -l, X11)
 
 # testing
 ## directories
@@ -120,34 +130,41 @@ endif
 
 all: $(NAME)
 
-$(NAME): $(OBJ)
-	$(LD) $(OBJ) -o $@ $(LDFLAGS)
+$(NAME): $(OBJ) $(MLX)
+	@$(LD) $(OBJ) -o $@ $(LDFLAGS)
+	@echo "Linking executable '$@' with LDFLAGS '$(LDFLAGS)'"
 
-test: $(UNI) $(OBJ) $(TEST_OBJ)
-	$(RM) $(TEST_OBJ_DIR)
-	$(MAKE) -C $(UNI_DIR) clean
+test: $(UNI) $(MLX) $(OBJ) $(TEST_OBJ)
+	@$(RM) $(TEST_OBJ_DIR)
+	@$(MAKE) -C $(UNI_DIR) clean > /dev/null
+	@$(MAKE) -C $(MLX_DIR) clean > /dev/null
+
+$(MLX):
+	@$(MAKE) -C $(MLX_DIR) > /dev/null
 
 $(UNI):
-	$(CMAKE) $(UNI_DIR)
-	$(MAKE) -C $(UNI_DIR)
+	@$(CMAKE) $(UNI_DIR) > /dev/null
+	@$(MAKE) -C $(UNI_DIR) > /dev/null
 
 $(TEST_OBJ_DIR)/%.out: $(TEST_SRC_DIR)/%.c
 	@$(DIR_DUP)
-	$(CC) $(OBJ) $(CFLAGS) $(TEST_CFLAGS) $(CPPFLAGS) $(TEST_CPPFLAGS) -o $@ $< $(LDFLAGS) $(TEST_LDFLAGS)
+	@$(CC) $(OBJ) $(CFLAGS) $(TEST_CFLAGS) $(CPPFLAGS) $(TEST_CPPFLAGS) -o $@ $< $(LDFLAGS) $(TEST_LDFLAGS)
 	./$@
-	$(RM) $@
+	@$(RM) $@
 
 $(OBJ_DIR)/%.o: %.c
 	@$(DIR_DUP)
-	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+	@echo "Compiling '$@' with cflags '$(CFLAGS)' and CPPFLAGS '$(CPPFLAGS)'" 
 
 -include $(DEPS)
 
 clean:
-	$(RM) $(OBJ_DIR)
+	@$(RM) $(OBJ_DIR)
+	@$(MAKE) -C $(MLX_DIR) clean > /dev/null
 
 fclean: clean
-	$(RM) $(NAME) $(DEPS)
+	@$(RM) $(NAME) $(DEPS)
 
 re: fclean all
 
