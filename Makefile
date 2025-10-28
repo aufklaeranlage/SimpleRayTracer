@@ -119,7 +119,7 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	$(LD) $(OBJ) -o $@ $(LDFLAGS)
 
-test: $(UNI) $(FPT) $(OBJ) $(TEST_OBJ)
+test: $(UNI) $(OBJ) $(TEST_OBJ)
 	$(RM) $(TEST_OBJ_DIR)
 	$(MAKE) -C $(UNI_DIR) clean
 

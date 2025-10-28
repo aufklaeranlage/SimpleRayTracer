@@ -21,6 +21,8 @@ t_tup	point(fpt x, fpt y, fpt z);
 
 t_tup	vec3d(fpt x, fpt y, fpt z);
 
+t_tup	tup0(void);
+
 // Checks
 
 bool	tup_equal(const t_tup *a, const t_tup *b);
@@ -30,5 +32,11 @@ bool	tup_equal(const t_tup *a, const t_tup *b);
 t_tup	*tup_add(t_tup *a, const t_tup *b);
 
 t_tup	*tup_sub(t_tup *a, const t_tup *b);
+
+t_tup	*tup_neg(t_tup *a);
+
+t_tup	*tup_scale(t_tup *a, fpt scale);
+
+fpt		tup_magn(const t_tup *a);
 
 #endif
