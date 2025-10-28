@@ -1,10 +1,15 @@
 #include "unity.h"
 
 #include "tuple.h"
+#include "fptc.h"
 
-static void	tuple_point(void);
+static void	tup_point(void);
 
-static void	tuple_vector(void);
+static void	tup_vec3d(void);
+
+static void	plain_point(void);
+
+static void	plain_vec3d(void);
 
 void setUp(void) {
 
@@ -16,27 +21,49 @@ void tearDown(void) {
 
 int	main(void) {
 	UNITY_BEGIN();
-	RUN_TEST(tuple_point);
-	RUN_TEST(tuple_vector);
+	RUN_TEST(tup_point);
+	RUN_TEST(tup_vec3d);
+	RUN_TEST(plain_point);
+	RUN_TEST(plain_vec3d);
 	return UNITY_END();
 }
 
-static void	tuple_point(void) {
-	t_tuple	t;
+static void	tup_point(void) {
+	t_tup	t;
 
-	t = tuple(FPN_FROMFLT(4.3),FPN_FROMFLT(-4.2),FPN_FROMFLT(3.1),FPN_FROMFLT(1.0));
-	TEST_ASSERT_EQUAL_INT32(FPN_FROMFLT(4.3), t.x);
-	TEST_ASSERT_EQUAL_INT32(FPN_FROMFLT(-4.2), t.y);
-	TEST_ASSERT_EQUAL_INT32(FPN_FROMFLT(3.1), t.z);
-	TEST_ASSERT_EQUAL_INT32(FPN_FROMFLT(1.0), t.w);
+	t = tup(fl2fpt(4.3),fl2fpt(-4.2),fl2fpt(3.1),fl2fpt(1.0));
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(4.3), t.x);
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(-4.2), t.y);
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(3.1), t.z);
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(1.0), t.w);
 }
 
-static void	tuple_vector(void) {
-	t_tuple	t;
+static void	tup_vec3d(void) {
+	t_tup	t;
 
-	t = tuple(FPN_FROMFLT(4.3),FPN_FROMFLT(-4.2),FPN_FROMFLT(3.1),FPN_FROMFLT(0.0));
-	TEST_ASSERT_EQUAL_INT32(FPN_FROMFLT(4.3), t.x);
-	TEST_ASSERT_EQUAL_INT32(FPN_FROMFLT(-4.2), t.y);
-	TEST_ASSERT_EQUAL_INT32(FPN_FROMFLT(3.1), t.z);
-	TEST_ASSERT_EQUAL_INT32(FPN_FROMFLT(0.0), t.w);
+	t = tup(fl2fpt(4.3),fl2fpt(-4.2),fl2fpt(3.1),fl2fpt(0.0));
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(4.3), t.x);
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(-4.2), t.y);
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(3.1), t.z);
+	TEST_ASSERT_EQUAL_INT32(fl2fpt(0.0), t.w);
+}
+
+static void	plain_point(void) {
+	t_tup	t;
+
+	t = point(i2fpt(4), i2fpt(-4), i2fpt(3));
+	TEST_ASSERT_EQUAL_INT32(i2fpt(4), t.x);
+	TEST_ASSERT_EQUAL_INT32(i2fpt(-4), t.y);
+	TEST_ASSERT_EQUAL_INT32(i2fpt(3), t.z);
+	TEST_ASSERT_EQUAL_INT32(i2fpt(1), t.w);
+}
+
+static void	plain_vec3d(void) {
+	t_tup	t;
+
+	t = vec3d(i2fpt(4), i2fpt(-4), i2fpt(3));
+	TEST_ASSERT_EQUAL_INT32(i2fpt(4), t.x);
+	TEST_ASSERT_EQUAL_INT32(i2fpt(-4), t.y);
+	TEST_ASSERT_EQUAL_INT32(i2fpt(3), t.z);
+	TEST_ASSERT_EQUAL_INT32(i2fpt(0), t.w);
 }

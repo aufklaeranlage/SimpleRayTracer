@@ -1,3 +1,12 @@
 [submodule "test/Unity"]
 	path = test/Unity
 	url = https://github.com/ThrowTheSwitch/Unity.git/src
+[submodule "lib/fptc-lib"]
+	path = lib/fptc-lib
+	url = https://github.com/mgetka/fptc-lib.git
+[submodule "lib/fptc-ns"]
+	path = lib/fptc-ns
+	url = git@github.com:aufklaeranlage/fptc-ns-lib.git
+[submodule "lib/fptc-ns-lib"]
+	path = lib/fptc-ns-lib
+	url = git@github.com:aufklaeranlage/fptc-ns-lib.git

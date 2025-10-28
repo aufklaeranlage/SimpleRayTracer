@@ -16,19 +16,11 @@ SRC += tuple_init.c
 OBJ		:= $(SRC:.c=.o)
 OBJ		:= $(addprefix $(OBJ_DIR)/, $(OBJ))
 
+##clibraries etc
+FPT_DIR	:= lib/fptc-ns-lib/src
+
 ## dependencies
 DEPS	:= $(OBJ:%.o=%.d)
-
-## libraries
-# fpn
-ifndef FPN_BITS
-	FPN_BITS=32
-endif
-ifndef FPN_WBITS
-	FPN_WBITS=24
-endif
-FPN		:= libfpn.a
-FPN_DIR	:= $(LIB_DIR)/fpn
 
 ## commands
 CC			:= cc
@@ -51,16 +43,13 @@ CPPFLAGS	:=
 CPPFLAGS	+= -MMD
 CPPFLAGS	+= -MP
 CPPFLAGS	+= $(addprefix -I, $(INC_DIR))
-CPPFLAGS	+= $(addprefix -I, $(FPN_DIR)/$(INC_DIR))
+CPPFLAGS	+= $(addprefix -I, $(FPT_DIR))
 
-CPPFLAGS	+= -DFPN_BITS=$(FPN_BITS) -DFPN_WBITS=$(FPN_WBITS)
+### fpt
+CPPFLAGS		+= -DFPT_BITS=32
 
 ## ldflags
 LDFLAGS		:=
-# fpn
-LDFLAGS		+= $(addprefix -L, $(FPN_DIR))
-LDFLAGS		+= $(addprefix -l, fpn)
-
 
 # testing
 ## directories
@@ -91,7 +80,7 @@ else
 	CFLAGS += -O0
 endif
 
-## conditional flags
+## conditional flagsbe
 ifeq ($(DEBUG), 1)
 	CFLAGS += -g3
 	CPPFLAGS += -g3
@@ -125,15 +114,12 @@ endif
 
 all: $(NAME)
 
-$(NAME): $(FPN) $(OBJ)
+$(NAME): $(OBJ)
 	$(LD) $(OBJ) -o $@ $(LDFLAGS)
 
-test: $(UNI) $(FPN) $(OBJ) $(TEST_OBJ)
+test: $(UNI) $(FPT) $(OBJ) $(TEST_OBJ)
 	$(RM) $(TEST_OBJ_DIR)
 	$(MAKE) -C $(UNI_DIR) clean
-
-$(FPN):
-	$(MAKE) -C $(FPN_DIR) FPN_BITS=32 FPN_WBITS=24
 
 $(UNI):
 	$(CMAKE) $(UNI_DIR)
