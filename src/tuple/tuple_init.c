@@ -17,3 +17,7 @@ t_tup	vec3d(fpt x, fpt y, fpt z) {
 t_tup	tup0(void) {
 	return ((t_tup) {0, 0, 0, 0});
 }
+
+t_tup	colr(fpt red, fpt green, fpt blue) {
+	return ((t_tup) {red, green, blue, 0});
+}

@@ -51,9 +51,7 @@ t_tup	*tup_scale(t_tup *a, fpt scale) {
 // account, since it's supposed to be used only with vectors.
 fpt		tup_magn(const t_tup *a) {
 	return (fpt_sqrt(
-		fpt_add(fpt_mul(a->x, a->x),
-			fpt_add(fpt_mul(a->y, a->y),
-				(fpt_mul(a->z, a->z))))));
+		fpt_mul(a->x, a->x) + fpt_mul(a->y, a->y) + fpt_mul(a->z, a->z)));
 }
 
 // Takes a pointer to a tuple, normalizes the tuple in place.
@@ -68,9 +66,7 @@ t_tup	*tup_norm(t_tup *a) {
 // Takes two pointers to tuples and returns their dot product.
 // Doesn't take w into account, since this should only be used on vectors.
 fpt		tup_dot(const t_tup *a, const t_tup *b) {
-	return (fpt_add(fpt_mul(a->x, b->x),
-		fpt_add(fpt_mul(a->y, b->y),
-			fpt_mul(a->z, b->z))));
+	return (fpt_mul(a->x, b->x) + fpt_mul(a->y, b->y) + fpt_mul(a->z, b->z));
 }
 
 // Takes two pointers to tuples and returns calculates their cross product,
@@ -83,5 +79,15 @@ t_tup	*tup_cross(t_tup *a, const t_tup *b) {
 			fpt_sub(fpt_mul(a->z, b->x), fpt_mul(a->x, b->z)),
 			fpt_sub(fpt_mul(a->x, b->y), fpt_mul(a->y, b->x)));
 	*a = v1;
+	return (a);
+}
+
+// Takes two pointers to tuples and multiplies the second with the first.
+// Returns the to the first parameter.
+t_tup	*tup_mul(t_tup *a, const t_tup *b) {
+	a->x = fpt_mul(a->x, b->x);
+	a->y = fpt_mul(a->y, b->y);
+	a->z = fpt_mul(a->z, b->z);
+	a->w = fpt_mul(a->w, b->w);
 	return (a);
 }

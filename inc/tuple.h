@@ -25,6 +25,8 @@ t_tup	vec3d(fpt x, fpt y, fpt z);
 
 t_tup	tup0(void);
 
+t_tup	colr(fpt red, fpt green, fpt blue);
+
 // Checks
 
 bool	tup_equal(const t_tup *a, const t_tup *b);
@@ -48,5 +50,7 @@ t_tup	*tup_norm(t_tup *a);
 fpt		tup_dot(const t_tup *a, const t_tup *b);
 
 t_tup	*tup_cross(t_tup *a, const t_tup *b);
+
+t_tup	*tup_mul(t_tup *a, const t_tup *b);
 
 #endif

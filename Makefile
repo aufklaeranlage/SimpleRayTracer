@@ -9,7 +9,9 @@ NAME		:= miniRT
 
 ## sources
 SRC	:=
-# SRC += main.c
+$(NAME): SRC += main.c
+all: SRC += main.c
+re: SRC += main.c
 vpath %.c $(SRC_DIR)/tuple
 SRC += tuple_init.c
 SRC += tuple_check.c
@@ -67,6 +69,7 @@ UNI_DIR		:= test/Unity
 TEST_SRC	:=
 vpath %.c $(TEST_SRC_DIR)
 TEST_SRC	+= tuple.c
+TEST_SRC	+= color.c
 
 ## objects
 TEST_OBJ	:= $(TEST_SRC:.c=.out)
