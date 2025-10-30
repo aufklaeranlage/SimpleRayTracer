@@ -1,5 +1,7 @@
 #include "tuple.h"
 
+#include "matrix.h"
+
 #include "fptc-ns.h"
 
 // !!! WARNING !!!
@@ -89,5 +91,20 @@ t_tup	*tup_mul(t_tup *a, const t_tup *b) {
 	a->y = fpt_mul(a->y, b->y);
 	a->z = fpt_mul(a->z, b->z);
 	a->w = fpt_mul(a->w, b->w);
+	return (a);
+}
+
+t_tup	*mat_x_tup(const t_mat *m, t_tup *a) {
+	t_tup	ret;
+
+	ret.x = fpt_mul(m->m[0][0], a->x) + fpt_mul(m->m[0][1], a->y) +
+		fpt_mul(m->m[0][2], a->z) + fpt_mul(m->m[0][3], a->w);
+	ret.y = fpt_mul(m->m[1][0], a->x) + fpt_mul(m->m[1][1], a->y) +
+		fpt_mul(m->m[1][2], a->z) + fpt_mul(m->m[1][3], a->w);
+	ret.z = fpt_mul(m->m[2][0], a->x) + fpt_mul(m->m[2][1], a->y) +
+		fpt_mul(m->m[2][2], a->z) + fpt_mul(m->m[2][3], a->w);
+	ret.w = fpt_mul(m->m[3][0], a->x) + fpt_mul(m->m[3][1], a->y) +
+		fpt_mul(m->m[3][2], a->z) + fpt_mul(m->m[3][3], a->w);
+	*a = ret;
 	return (a);
 }

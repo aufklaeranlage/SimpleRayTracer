@@ -9,25 +9,28 @@ NAME		:= miniRT
 
 ## sources
 SRC	:=
-SRC := main.c
+# SRC := main.c
+vpath %.c $(SRC_DIR)
+SRC += utils.c
 vpath %.c $(SRC_DIR)/tuple
 SRC += tuple_init.c
 SRC += tuple_check.c
 SRC += tuple_math.c
-vpath %.c $(SRC_DIR)/graphics
-SRC += screen.c
-SRC += window.c
-SRC += image.c
-SRC += draw.c
+vpath %.c $(SRC_DIR)/matrix
+SRC += matrix_init.c
+SRC += matrix_check.c
+SRC += matrix_math.c
 
 ## objects
 OBJ		:= $(SRC:.c=.o)
 OBJ		:= $(addprefix $(OBJ_DIR)/, $(OBJ))
 
 ## libraries etc
-FPT_DIR	:= lib/fptc-ns-lib/src
-MLX_DIR := lib/minilibx-linux
-MLX		:= libmlx.a
+FPT_DIR		:= lib/fptc-ns-lib/src
+IMLX_DIR	:= lib/imlx
+IMLX		:= libimlx.a
+MLX_DIR		:= lib/minilibx-linux
+MLX			:= libmlx.a
 
 ## dependencies
 DEPS	:= $(OBJ:%.o=%.d)
@@ -54,13 +57,16 @@ CPPFLAGS	+= -MMD
 CPPFLAGS	+= -MP
 CPPFLAGS	+= $(addprefix -I, $(INC_DIR))
 CPPFLAGS	+= $(addprefix -I, $(FPT_DIR))
+CPPFLAGS	+= $(addprefix -I, $(IMLX_DIR)/inc)
 CPPFLAGS	+= $(addprefix -I, $(MLX_DIR))
 
 ### fpt
-CPPFLAGS		+= -DFPT_BITS=32
+CPPFLAGS	+= -DFPT_BITS=32
 
 ## ldflags
 LDFLAGS		:=
+LDFLAGS		+= $(addprefix -L, $(IMLX_DIR))
+LDFLAGS		+= $(addprefix -l, imlx)
 LDFLAGS		+= $(addprefix -L, $(MLX_DIR))
 LDFLAGS		+= $(addprefix -l, mlx)
 LDFLAGS		+= $(addprefix -l, Xext)
@@ -80,6 +86,7 @@ TEST_SRC	:=
 vpath %.c $(TEST_SRC_DIR)
 TEST_SRC	+= tuple.c
 TEST_SRC	+= color.c
+TEST_SRC	+= matrix.c
 
 ## objects
 TEST_OBJ	:= $(TEST_SRC:.c=.out)
@@ -130,17 +137,22 @@ endif
 
 all: $(NAME)
 
-$(NAME): $(OBJ) $(MLX)
+$(NAME): $(OBJ) $(IMLX) $(MLX)
 	@$(LD) $(OBJ) -o $@ $(LDFLAGS)
 	@echo "Linking executable '$@' with LDFLAGS '$(LDFLAGS)'"
 
-test: $(UNI) $(MLX) $(OBJ) $(TEST_OBJ)
+test: $(UNI) $(IMLX) $(MLX) $(OBJ) $(TEST_OBJ)
 	@$(RM) $(TEST_OBJ_DIR)
 	@$(MAKE) -C $(UNI_DIR) clean > /dev/null
 	@$(MAKE) -C $(MLX_DIR) clean > /dev/null
 
 $(MLX):
+	@echo "Creating library 'mlx'"
 	@$(MAKE) -C $(MLX_DIR) > /dev/null
+
+$(IMLX):
+	@echo "Creating library 'imlx'"
+	@$(MAKE) -C $(IMLX_DIR) > /dev/null
 
 $(UNI):
 	@$(CMAKE) $(UNI_DIR) > /dev/null
@@ -148,6 +160,7 @@ $(UNI):
 
 $(TEST_OBJ_DIR)/%.out: $(TEST_SRC_DIR)/%.c
 	@$(DIR_DUP)
+	@echo "Compiling '$@' with cflags '$(CFLAGS) $(TEST_CFLAGS)' and CPPFLAGS '$(CPPFLAGS) $(TEST_CPPFLAGS)'" 
 	@$(CC) $(OBJ) $(CFLAGS) $(TEST_CFLAGS) $(CPPFLAGS) $(TEST_CPPFLAGS) -o $@ $< $(LDFLAGS) $(TEST_LDFLAGS)
 	./$@
 	@$(RM) $@
@@ -162,9 +175,11 @@ $(OBJ_DIR)/%.o: %.c
 clean:
 	@$(RM) $(OBJ_DIR)
 	@$(MAKE) -C $(MLX_DIR) clean > /dev/null
+	@$(MAKE) -C $(IMLX_DIR) clean > /dev/null
 
 fclean: clean
 	@$(RM) $(NAME) $(DEPS)
+	@$(MAKE) -C $(IMLX_DIR) fclean > /dev/null
 
 re: fclean all
 

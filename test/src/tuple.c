@@ -1,6 +1,9 @@
 #include "unity.h"
 
 #include "tuple.h"
+#include "matrix.h"
+#include "utils.h"
+
 #include "fptc-ns.h"
 
 static void	tup_point(void);
@@ -35,6 +38,8 @@ static void	test_dot(void);
 
 static void	test_cross(void);
 
+static void test_mat_x_tup(void);
+
 void setUp(void) {
 
 }
@@ -61,6 +66,7 @@ int	main(void) {
 	RUN_TEST(test_norm);
 	RUN_TEST(test_dot);
 	RUN_TEST(test_cross);
+	RUN_TEST(test_mat_x_tup);
 	return UNITY_END();
 }
 
@@ -254,4 +260,21 @@ static void	test_cross(void) {
 	TEST_ASSERT_EQUAL_INT32(fl2fpt(1), t2.x);
 	TEST_ASSERT_EQUAL_INT32(fl2fpt(-2), t2.y);
 	TEST_ASSERT_EQUAL_INT32(fl2fpt(1), t2.z);
+}
+
+static void test_mat_x_tup(void) {
+	t_tup	t = tup(fl2fpt(1), fl2fpt(2), fl2fpt(3), fl2fpt(1));
+
+	t_mat	m = mat((fpt[4][4]){
+		{fl2fpt(1), fl2fpt(2), fl2fpt(3), fl2fpt(4)},
+		{fl2fpt(2), fl2fpt(4), fl2fpt(4), fl2fpt(2)},
+		{fl2fpt(8), fl2fpt(6), fl2fpt(4), fl2fpt(1)},
+		{fl2fpt(0), fl2fpt(0), fl2fpt(0), fl2fpt(1)}
+	});
+
+	t_tup	test = tup(fl2fpt(18), fl2fpt(24), fl2fpt(33), fl2fpt(1));
+
+	mat_x_tup(&m, &t);
+
+	TEST_ASSERT(tup_equal(&t, &test));
 }

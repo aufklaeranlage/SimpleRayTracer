@@ -13,3 +13,6 @@
 [submodule "lib/minilibx-linux"]
 	path = lib/minilibx-linux
 	url = https://github.com/42paris/minilibx-linux.git
+[submodule "lib/imlx"]
+	path = lib/imlx
+	url = git@github.com:aufklaeranlage/imlx.git

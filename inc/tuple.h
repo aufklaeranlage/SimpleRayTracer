@@ -1,12 +1,10 @@
 #ifndef TUPLE_H
 # define TUPLE_H
 
-# include <stdio.h>	// needed for sscanf in ftpc.h
+# include "matrix.h"
+
 # include "fptc-ns.h"
-
 # include <stdbool.h>
-
-# define EPSILON 4
 
 typedef struct s_tup {
 	fpt	x;
@@ -31,8 +29,6 @@ t_tup	colr(fpt red, fpt green, fpt blue);
 
 bool	tup_equal(const t_tup *a, const t_tup *b);
 
-bool	fpt_equal(fpt a, fpt b);
-
 // Maths
 
 t_tup	*tup_add(t_tup *a, const t_tup *b);
@@ -52,5 +48,7 @@ fpt		tup_dot(const t_tup *a, const t_tup *b);
 t_tup	*tup_cross(t_tup *a, const t_tup *b);
 
 t_tup	*tup_mul(t_tup *a, const t_tup *b);
+
+t_tup	*mat_x_tup(const t_mat *m, t_tup *a);
 
 #endif
