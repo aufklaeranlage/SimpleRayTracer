@@ -4,7 +4,7 @@
 # include "fptc-ns.h"
 #include <stdbool.h>
 
-# define EPSILON 4
+# define EPSILON 8
 
 /* Checkers */
 

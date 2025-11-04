@@ -20,6 +20,7 @@ vpath %.c $(SRC_DIR)/matrix
 SRC += matrix_init.c
 SRC += matrix_check.c
 SRC += matrix_math.c
+SRC += matrix_inverse.c
 
 ## objects
 OBJ		:= $(SRC:.c=.o)
